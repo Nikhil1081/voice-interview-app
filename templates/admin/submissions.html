@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="topbar">
+    <h1>📂 Candidate Submissions</h1>
+    <a class="btn btn-secondary" href="{{ url_for('admin_dashboard') }}">← Back</a>
+  </div>
+
+  {% if submissions %}
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>👤 Candidate</th>
+            <th>📧 Email</th>
+            <th>❓ Question</th>
+            <th>🎙️ Audio</th>
+            <th>💬 Feedback</th>
+            <th>📅 Date</th>
+            <th>⚙️ Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in submissions %}
+          <tr>
+            <td><strong>{{ s.candidate.name }}</strong></td>
+            <td class="muted">{{ s.candidate.email }}</td>
+            <td>{{ s.question.text[:30] }}...</td>
+            <td>
+              <audio controls src="{{ url_for('uploaded_file', filename=s.audio_filename) }}" style="max-width: 150px;"></audio>
+            </td>
+            <td>
+              {% if s.feedback %}
+                <span class="badge badge-success">✅ Yes</span>
+              {% else %}
+                <span class="badge badge-warning">⏳ No</span>
+              {% endif %}
+            </td>
+            <td class="muted">{{ s.created_at.strftime('%Y-%m-%d') }}</td>
+            <td>
+              <a class="btn btn-sm btn-primary" href="{{ url_for('submission_detail', sid=s.id) }}">Review</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="muted">No submissions yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

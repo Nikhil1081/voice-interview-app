@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="topbar">
+    <h1>👁️ Review Submission</h1>
+    <a class="btn btn-secondary" href="{{ url_for('admin_submissions') }}">← Back</a>
+  </div>
+
+  <div class="submission-details">
+    <div class="detail-row">
+      <label>👤 Candidate Name:</label>
+      <p>{{ sub.candidate.name }}</p>
+    </div>
+    <div class="detail-row">
+      <label>📧 Email:</label>
+      <p>{{ sub.candidate.email }}</p>
+    </div>
+    <div class="detail-row">
+      <label>❓ Question:</label>
+      <p>{{ sub.question.text }}</p>
+    </div>
+    <div class="detail-row">
+      <label>📅 Submitted:</label>
+      <p>{{ sub.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+    </div>
+  </div>
+
+  <hr />
+
+  <h2>🎙️ Audio Response</h2>
+  <audio controls src="{{ url_for('uploaded_file', filename=sub.audio_filename) }}" style="width: 100%; margin: 12px 0;"></audio>
+
+  <hr />
+
+  <h2>💬 Feedback</h2>
+  <form method="POST">
+    <div class="form-group">
+      <textarea name="feedback" rows="8" placeholder="Write constructive feedback for the candidate...">{{ sub.feedback or "" }}</textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-success" type="submit">💾 Save Feedback</button>
+    </div>
+  </form>
+
+  <hr />
+
+  <form method="POST" action="{{ url_for('delete_submission', sid=sub.id) }}" onsubmit="return confirm('Delete this submission?');">
+    <button class="btn btn-danger" type="submit">🗑️ Delete Submission</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="topbar">
+    <div>
+      <h1>📊 Admin Dashboard</h1>
+      <p class="subtitle">Overview of candidates, questions, and submissions</p>
+    </div>
+    <a class="btn btn-secondary" href="{{ url_for('admin_logout') }}">🚪 Logout</a>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h2 class="stat-number">{{ total_candidates }}</h2>
+      <p class="stat-label">👥 Total Candidates</p>
+    </div>
+    <div class="stat-card">
+      <h2 class="stat-number">{{ total_questions }}</h2>
+      <p class="stat-label">📋 Interview Questions</p>
+    </div>
+    <div class="stat-card">
+      <h2 class="stat-number">{{ total_submissions }}</h2>
+      <p class="stat-label">🎤 Audio Submissions</p>
+    </div>
+  </div>
+
+  <div class="admin-actions">
+    <a class="btn btn-primary" href="{{ url_for('admin_questions') }}">📝 Manage Questions</a>
+    <a class="btn btn-primary" href="{{ url_for('admin_submissions') }}">📂 Review Submissions</a>
+  </div>
+
+  <hr />
+
+  <h2>⏱️ Latest Submissions</h2>
+  {% if latest_submissions %}
+    <div class="submissions-list">
+      {% for s in latest_submissions %}
+        <div class="submission-item">
+          <div class="submission-info">
+            <p><strong>{{ s.candidate.name }}</strong></p>
+            <p class="muted">{{ s.candidate.email }}</p>
+            <p class="muted">Q: {{ s.question.text[:50] }}...</p>
+            <p class="muted">{{ s.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+          </div>
+          <a class="btn btn-sm btn-secondary" href="{{ url_for('submission_detail', sid=s.id) }}">Review</a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="muted">No submissions yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

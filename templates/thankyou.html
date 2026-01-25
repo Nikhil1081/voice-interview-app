@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card success-card">
+  <h1>✅ Submission Complete</h1>
+  <p class="subtitle">Your voice interview has been submitted successfully.</p>
+  
+  <div class="success-details">
+    <p><strong>Thank you, {{ candidate_name }}!</strong></p>
+    <p>Our admin team will review your answers and provide feedback soon.</p>
+  </div>
+
+  <div class="actions">
+    <a class="btn btn-primary" href="{{ url_for('index') }}">← Back to Home</a>
+  </div>
+</div>
+{% endblock %}

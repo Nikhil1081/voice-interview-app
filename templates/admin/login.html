@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card auth-card">
+  <div class="auth-header">
+    <h1>🔐 Admin Login</h1>
+    <p class="subtitle">Access the admin dashboard to manage questions and review submissions.</p>
+  </div>
+
+  <form method="POST">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required placeholder="Enter admin username" />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required placeholder="Enter admin password" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">🔓 Login</button>
+  </form>
+
+  <div class="default-creds">
+    <p><strong>🔑 Default Credentials:</strong></p>
+    <p>Username: <code>admin</code></p>
+    <p>Password: <code>admin123</code></p>
+    <p class="muted">⚠️ Change these immediately in production!</p>
+  </div>
+
+  <div class="actions">
+    <a class="btn btn-secondary" href="{{ url_for('index') }}">← Back to Home</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="hero">
+    <h1>🎤 Voice Interview Portal</h1>
+    <p class="subtitle">Complete your internship interview by recording answers to interview questions.</p>
+  </div>
+
+  <div class="actions">
+    <a class="btn btn-primary" href="{{ url_for('interview') }}">📝 Start Interview</a>
+    <a class="btn btn-secondary" href="{{ url_for('admin_login') }}">🔐 Admin Login</a>
+  </div>
+
+  <hr />
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>📋 How It Works</h3>
+      <p>Fill in your details, read the questions, and record your voice responses directly in your browser. No external apps needed!</p>
+    </div>
+    <div class="info-card">
+      <h3>✅ Easy Recording</h3>
+      <p>Click "Start Recording", speak your answer, click "Stop". Your audio is saved instantly to the browser.</p>
+    </div>
+    <div class="info-card">
+      <h3>🎯 Instant Submission</h3>
+      <p>Submit all your answers at once. The admin team will review and provide feedback shortly.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
