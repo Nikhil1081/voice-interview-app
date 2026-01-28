@@ -1,6 +1,9 @@
-# 🎤 Voice Interview App
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/367d7e02-90bd-489c-8608-1a04b5c8d0f0" /># 🎤 Voice Interview App
 
-A full-stack Flask web application for asynchronous AI-powered voice interviews. Candidates record video/audio responses to interview questions, and admins can review submissions and provide feedback.
+🎤 Voice Interview App
+A full-stack Flask web application for asynchronous voice-based interview capture.
+Candidates record audio responses to predefined interview questions, and admins can review and replay submissions.
+⚠️ This system is for interview capture only. Evaluation, scoring, and hiring decisions are intentionally out of scope.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?style=flat-square)
 ![Flask](https://img.shields.io/badge/Flask-3.0.3-green?style=flat-square)
@@ -23,7 +26,7 @@ A full-stack Flask web application for asynchronous AI-powered voice interviews.
 - ✅ **Question Management** - Add, edit, and delete interview questions
 - ✅ **Dashboard** - View statistics (candidates, questions, submissions)
 - ✅ **Audio Review** - Play candidate responses directly in the dashboard
-- ✅ **Feedback System** - Give detailed feedback on each submission
+- ✅ **Review Dashboard** - Replay candidate audio submissions
 - ✅ **Submission History** - View all candidates and their submissions
 
 ### 🔐 Security
@@ -34,6 +37,12 @@ A full-stack Flask web application for asynchronous AI-powered voice interviews.
 - CSRF protection (Flask)
 
 ---
+
+### 🚫 Explicitly Out of Scope
+- ❌ Voice evaluation or scoring
+- ❌ Candidate ranking or shortlisting
+- ❌ Sentiment or emotion analysis
+- ❌ Hiring or selection decisions
 
 ## 📋 Project Structure
 
@@ -127,7 +136,36 @@ voice-interview-app/
 
 ## 🌍 Deployment
 
-### Option 1: Deploy to Firebase Hosting + Cloud Functions (Recommended)
+### Option 1: Deploy to Railway
+
+#### Prerequisites
+- Railway Account (railway.app)
+- GitHub repository
+
+#### Steps:
+
+1. **Push to GitHub** (already done!)
+
+2. **Connect to Railway:**
+   - Go to [railway.app](https://railway.app)
+   - Click "New Project"
+   - Select "Deploy from GitHub repo"
+   - Select this repository
+   - Click "Deploy"
+
+3. **Set Environment Variables:**
+   - Go to "Variables" tab
+   - Add:
+     - `SECRET_KEY=your-secret-key`
+     - `ADMIN_USERNAME=admin`
+     - `ADMIN_PASSWORD=secure-password`
+     - `FLASK_ENV=production`
+
+4. **Your app will be live automatically!**
+
+---
+
+### Option 2: Deploy to Firebase Hosting + Cloud Functions (Recommended)
 
 #### Prerequisites
 - [Firebase CLI](https://firebase.google.com/docs/cli) installed
@@ -183,7 +221,7 @@ voice-interview-app/
 
 ---
 
-### Option 2: Deploy to Heroku
+### Option 3: Deploy to Heroku
 
 #### Prerequisites
 - [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
@@ -222,35 +260,6 @@ voice-interview-app/
    ```
 
 5. **Your app will be live at:** `https://your-app-name.herokuapp.com`
-
----
-
-### Option 3: Deploy to Railway
-
-#### Prerequisites
-- Railway Account (railway.app)
-- GitHub repository
-
-#### Steps:
-
-1. **Push to GitHub** (already done!)
-
-2. **Connect to Railway:**
-   - Go to [railway.app](https://railway.app)
-   - Click "New Project"
-   - Select "Deploy from GitHub repo"
-   - Select this repository
-   - Click "Deploy"
-
-3. **Set Environment Variables:**
-   - Go to "Variables" tab
-   - Add:
-     - `SECRET_KEY=your-secret-key`
-     - `ADMIN_USERNAME=admin`
-     - `ADMIN_PASSWORD=secure-password`
-     - `FLASK_ENV=production`
-
-4. **Your app will be live automatically!**
 
 ---
 
@@ -294,7 +303,7 @@ voice-interview-app/
 | POST | `/admin/questions/<id>/edit` | Edit question |
 | POST | `/admin/questions/<id>/delete` | Delete question |
 | GET | `/admin/submissions` | View submissions |
-| GET/POST | `/admin/submissions/<id>` | Review submission + give feedback |
+| GET/POST | `/admin/submissions/<id>` | Review submission (audio playback & notes) |
 | POST | `/admin/submissions/<id>/delete` | Delete submission |
 
 ---
@@ -330,7 +339,7 @@ candidate_id (Foreign Key) -> Candidate
 question_id (Foreign Key) -> Question
 audio_filename (String)
 transcript (Text) - Optional
-feedback (Text) - Admin feedback
+feedback (Text) - Optional admin remarks (non-evaluative)
 created_at (DateTime)
 ```
 
@@ -428,15 +437,17 @@ python app.py --port 5001
 
 ## 📈 Future Enhancements
 
-- ✅ Audio transcription (Google Speech-to-Text API)
-- ✅ Candidate scoring system
-- ✅ Email notifications
-- ✅ Export reports (PDF/Excel)
-- ✅ Video recording support
-- ✅ AI-powered candidate scoring
-- ✅ Question templates library
-- ✅ Multi-language support
-- ✅ Advanced analytics dashboard
+> (Phase-2 / Future Work — NOT part of this hackathon)
+
+- Audio transcription (Google Speech-to-Text API)
+- Candidate scoring system
+- AI-powered evaluation (post-interview analysis)
+- Email notifications
+- Export reports (PDF/Excel)
+- Video recording support
+- Question templates library
+- Multi-language support
+- Advanced analytics dashboard
 
 ---
 
