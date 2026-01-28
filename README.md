@@ -1,4 +1,3 @@
-<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/367d7e02-90bd-489c-8608-1a04b5c8d0f0" /># 🎤 Voice Interview App
 
 🎤 Voice Interview App
 A full-stack Flask web application for asynchronous voice-based interview capture.
