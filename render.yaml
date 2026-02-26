@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: voice-interview-app
+    runtime: python
+    plan: free
+    autoDeploy: true
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+    healthCheckPath: /
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      # Set these in Render dashboard (do not commit real secrets)
+      - key: SECRET_KEY
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      # Recommended: use Render Postgres and set DATABASE_URL automatically
+      - key: DATABASE_URL
+        sync: false
+      # Optional: if you attach a persistent disk, point uploads there
+      - key: UPLOAD_FOLDER
+        sync: false
