@@ -1,6 +1,6 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="card">
+{% extends "admin/base_admin.html" %}
+{% block admin_content %}
+<div class="card" data-page="submission-detail" data-submission-id="{{ sub.id }}">
   <div class="topbar">
     <h1>👁️ Review Submission</h1>
     <a class="btn btn-secondary" href="{{ url_for('admin_submissions') }}">← Back</a>
@@ -32,10 +32,16 @@
 
   <hr />
 
-  <h2>💬 Feedback</h2>
-  <form method="POST">
+  <h2>📝 Transcript + Notes</h2>
+  <form method="POST" id="submissionNotesForm">
     <div class="form-group">
-      <textarea name="feedback" rows="8" placeholder="Write constructive feedback for the candidate...">{{ sub.feedback or "" }}</textarea>
+      <label for="transcript">Transcript (optional)</label>
+      <textarea id="transcript" name="transcript" rows="6" placeholder="Paste transcript text here (optional)…">{{ sub.transcript or "" }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="feedback">Feedback / Notes</label>
+      <textarea id="feedback" name="feedback" rows="8" placeholder="Write constructive feedback or internal notes…">{{ sub.feedback or "" }}</textarea>
     </div>
     <div class="form-actions">
       <button class="btn btn-success" type="submit">💾 Save Feedback</button>

@@ -1,6 +1,6 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="card">
+{% extends "admin/base_admin.html" %}
+{% block admin_content %}
+<div class="card" data-page="questions">
   <div class="topbar">
     <h1>📋 Manage Interview Questions</h1>
     <a class="btn btn-secondary" href="{{ url_for('admin_dashboard') }}">← Back</a>
@@ -8,7 +8,7 @@
 
   <div class="form-section">
     <h2>Add New Question</h2>
-    <form method="POST" class="inline-form">
+    <form method="POST" class="inline-form" id="addQuestionForm">
       <input type="text" name="text" placeholder="Enter a new interview question..." required />
       <button class="btn btn-success" type="submit">➕ Add Question</button>
     </form>
@@ -18,17 +18,17 @@
 
   <h2>Current Questions</h2>
   {% if questions %}
-    <div class="questions-list">
+    <div class="questions-list" id="questionsList">
       {% for q in questions %}
-      <div class="question-item">
-        <form method="POST" action="{{ url_for('edit_question', qid=q.id) }}" class="edit-form">
+      <div class="question-item" data-qid="{{ q.id }}">
+        <form method="POST" action="{{ url_for('edit_question', qid=q.id) }}" class="edit-form" data-qid="{{ q.id }}">
           <input type="text" name="text" value="{{ q.text }}" required />
           <button class="btn btn-sm btn-primary" type="submit">✏️ Update</button>
         </form>
 
         <form method="POST" action="{{ url_for('delete_question', qid=q.id) }}"
               onsubmit="return confirm('Delete this question?');" class="delete-form">
-          <button class="btn btn-sm btn-danger" type="submit">🗑️ Delete</button>
+          <button class="btn btn-sm btn-danger" type="submit" data-qid="{{ q.id }}">🗑️ Delete</button>
         </form>
       </div>
       {% endfor %}

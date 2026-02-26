@@ -24,25 +24,41 @@
 
     {% if questions %}
       <h2>Interview Questions</h2>
-      {% for q in questions %}
-        <div class="question-block">
-          <h3>Question {{ loop.index }} of {{ questions|length }}</h3>
-          <p class="question-text">{{ q.text }}</p>
-
-          <div class="recorder" data-qid="{{ q.id }}">
-            <div class="recorder-controls">
-              <button type="button" class="btn btn-sm btn-success startBtn">▶️ Start Recording</button>
-              <button type="button" class="btn btn-sm btn-danger stopBtn" disabled>⏹️ Stop</button>
-              <span class="status">⚪ Not recorded</span>
+      <div class="chat-thread">
+        {% for q in questions %}
+          <div class="chat-row assistant">
+            <div class="chat-bubble assistant">
+              <div class="chat-meta">
+                <strong>Interviewer</strong>
+                <p class="muted">Q{{ loop.index }} / {{ questions|length }}</p>
+              </div>
+              <p class="question-text">{{ q.text }}</p>
             </div>
-
-            <audio class="preview" controls style="display:none; margin-top: 10px;"></audio>
-
-            <!-- hidden input file (will be filled by JS) -->
-            <input type="file" name="audio_{{ q.id }}" class="audioInput" accept="audio/*" hidden />
           </div>
-        </div>
-      {% endfor %}
+
+          <div class="chat-row user">
+            <div class="chat-bubble user">
+              <div class="chat-meta">
+                <strong>Your answer</strong>
+                <p class="muted">Audio</p>
+              </div>
+
+              <div class="recorder" data-qid="{{ q.id }}">
+                <div class="recorder-controls">
+                  <button type="button" class="btn btn-sm btn-success startBtn">▶️ Start Recording</button>
+                  <button type="button" class="btn btn-sm btn-danger stopBtn" disabled>⏹️ Stop</button>
+                  <span class="status">⚪ Not recorded</span>
+                </div>
+
+                <audio class="preview" controls style="display:none; margin-top: 10px;"></audio>
+
+                <!-- hidden input file (will be filled by JS) -->
+                <input type="file" name="audio_{{ q.id }}" class="audioInput" accept="audio/*" hidden />
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
     {% else %}
       <div class="alert alert-danger">
         <p>❌ No questions available. Please contact the admin.</p>

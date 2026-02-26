@@ -1,14 +1,31 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="card">
+{% extends "admin/base_admin.html" %}
+{% block admin_content %}
+<div class="card" data-page="submissions">
   <div class="topbar">
     <h1>📂 Candidate Submissions</h1>
     <a class="btn btn-secondary" href="{{ url_for('admin_dashboard') }}">← Back</a>
   </div>
 
+  <div class="toolbar" style="margin-top: 8px;">
+    <div class="toolbar-left">
+      <div class="input-inline">
+        <input id="subSearch" type="text" placeholder="Search name/email/question…" />
+        <select id="subFeedback">
+          <option value="">Feedback: Any</option>
+          <option value="yes">Feedback: Yes</option>
+          <option value="no">Feedback: No</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="toolbar-right">
+      <a class="btn btn-secondary" id="exportCsvBtn" href="{{ url_for('admin_submissions_export') }}">⬇️ Export CSV</a>
+    </div>
+  </div>
+
   {% if submissions %}
     <div class="table-responsive">
-      <table class="table">
+      <table class="table" id="submissionsTable">
         <thead>
           <tr>
             <th>👤 Candidate</th>
@@ -20,27 +37,27 @@
             <th>⚙️ Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="submissionsTbody">
           {% for s in submissions %}
-          <tr>
-            <td><strong>{{ s.candidate.name }}</strong></td>
-            <td class="muted">{{ s.candidate.email }}</td>
-            <td>{{ s.question.text[:30] }}...</td>
-            <td>
-              <audio controls src="{{ url_for('uploaded_file', filename=s.audio_filename) }}" style="max-width: 150px;"></audio>
-            </td>
-            <td>
-              {% if s.feedback %}
-                <span class="badge badge-success">✅ Yes</span>
-              {% else %}
-                <span class="badge badge-warning">⏳ No</span>
-              {% endif %}
-            </td>
-            <td class="muted">{{ s.created_at.strftime('%Y-%m-%d') }}</td>
-            <td>
-              <a class="btn btn-sm btn-primary" href="{{ url_for('submission_detail', sid=s.id) }}">Review</a>
-            </td>
-          </tr>
+            <tr>
+              <td><strong>{{ s.candidate.name }}</strong></td>
+              <td class="muted">{{ s.candidate.email }}</td>
+              <td>{{ s.question.text[:30] }}...</td>
+              <td>
+                <audio controls src="{{ url_for('uploaded_file', filename=s.audio_filename) }}" style="max-width: 150px;"></audio>
+              </td>
+              <td>
+                {% if s.feedback %}
+                  <span class="badge badge-success">✅ Yes</span>
+                {% else %}
+                  <span class="badge badge-warning">⏳ No</span>
+                {% endif %}
+              </td>
+              <td class="muted">{{ s.created_at.strftime('%Y-%m-%d') }}</td>
+              <td>
+                <a class="btn btn-sm btn-primary" href="{{ url_for('submission_detail', sid=s.id) }}">Review</a>
+              </td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>

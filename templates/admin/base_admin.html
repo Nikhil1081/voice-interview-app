@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block header_actions %}
+  <a class="btn btn-secondary" href="{{ url_for('index') }}">Home</a>
+  <a class="btn btn-secondary" href="{{ url_for('admin_logout') }}">Logout</a>
+{% endblock %}
+
+{% block content %}
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <h3 style="margin-top: 0;">Admin</h3>
+    <p class="muted" style="margin-bottom: 0;">Manage questions and review submissions.</p>
+
+    <nav class="admin-nav" aria-label="Admin navigation">
+      <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}">
+        <span>📊 Dashboard</span>
+        <span class="muted">/admin</span>
+      </a>
+      <a class="nav-link {% if request.endpoint in ['admin_questions', 'edit_question', 'delete_question'] %}active{% endif %}" href="{{ url_for('admin_questions') }}">
+        <span>📋 Questions</span>
+        <span class="muted">CRUD</span>
+      </a>
+      <a class="nav-link {% if request.endpoint in ['admin_submissions', 'submission_detail', 'delete_submission'] %}active{% endif %}" href="{{ url_for('admin_submissions') }}">
+        <span>📂 Submissions</span>
+        <span class="muted">Review</span>
+      </a>
+    </nav>
+
+    <hr />
+    <p class="muted" style="margin-bottom: 0;">Tip: most actions update instantly.</p>
+  </aside>
+
+  <section class="admin-main">
+    {% block admin_content %}{% endblock %}
+  </section>
+</div>
+
+<script src="{{ url_for('static', filename='admin_dynamic.js') }}"></script>
+{% endblock %}

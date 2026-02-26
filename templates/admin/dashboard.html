@@ -1,12 +1,11 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "admin/base_admin.html" %}
+{% block admin_content %}
 <div class="card">
   <div class="topbar">
     <div>
       <h1>📊 Admin Dashboard</h1>
       <p class="subtitle">Overview of candidates, questions, and submissions</p>
     </div>
-    <a class="btn btn-secondary" href="{{ url_for('admin_logout') }}">🚪 Logout</a>
   </div>
 
   <div class="stats-grid">
@@ -15,12 +14,28 @@
       <p class="stat-label">👥 Total Candidates</p>
     </div>
     <div class="stat-card">
+      <h2 class="stat-number">{{ candidates_today }}</h2>
+      <p class="stat-label">🕒 Candidates Today</p>
+    </div>
+    <div class="stat-card">
       <h2 class="stat-number">{{ total_questions }}</h2>
       <p class="stat-label">📋 Interview Questions</p>
     </div>
     <div class="stat-card">
       <h2 class="stat-number">{{ total_submissions }}</h2>
       <p class="stat-label">🎤 Audio Submissions</p>
+    </div>
+    <div class="stat-card">
+      <h2 class="stat-number">{{ submissions_today }}</h2>
+      <p class="stat-label">🕒 Submissions Today</p>
+    </div>
+    <div class="stat-card">
+      <h2 class="stat-number">{{ feedback_done }}</h2>
+      <p class="stat-label">✅ Feedback Done</p>
+    </div>
+    <div class="stat-card">
+      <h2 class="stat-number">{{ feedback_pending }}</h2>
+      <p class="stat-label">⏳ Feedback Pending</p>
     </div>
   </div>
 
