@@ -47,7 +47,7 @@ Candidates record audio responses to predefined interview questions, and admins 
 
 ```
 voice-interview-app/
-├── app.py                          # Main Flask application
+├── main.py                         # Main Flask application
 ├── streamlit_app.py                 # Streamlit entrypoint (recommended)
 ├── requirements.txt                # Python dependencies
 ├── interview.db                    # SQLite database (auto-created)
@@ -121,7 +121,7 @@ voice-interview-app/
 
 5. **Run the application:**
    ```bash
-   python app.py
+   python main.py
    ```
 
    **Or run the Streamlit version (recommended):**
@@ -130,7 +130,7 @@ voice-interview-app/
    ```
 
 6. **Access the app:**
-   **If running Flask (`python app.py`):**
+   **If running Flask (`python main.py`):**
    - **Candidate:** http://127.0.0.1:5000/
    - **Admin:** http://127.0.0.1:5000/admin/login
 
@@ -317,7 +317,7 @@ voice-interview-app/
 4. **Configure Web App:**
    - Create a new web app
    - Select Flask and Python 3.10+
-   - Point to your `app.py`
+   - Point to your `main.py`
    - Configure WSGI file
 
 5. **Set environment variables in Web tab**
@@ -459,7 +459,7 @@ print(os.urandom(24).hex())
 ### Database Issues
 - Delete `interview.db` to reset
 - App will recreate it on next run
-- Reset admin credentials: edit `app.py` to change defaults
+- Reset admin credentials: edit `main.py` to change defaults
 
 ### Port Already in Use
 ```bash
@@ -470,7 +470,7 @@ lsof -i :5000
 kill -9 <PID>
 
 # Or use different port
-python app.py --port 5001
+python main.py --port 5001
 ```
 
 ---

@@ -6,6 +6,7 @@ from datetime import datetime
 import streamlit as st
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
+import importlib
 
 
 def _sync_streamlit_secrets_to_env() -> None:
@@ -27,7 +28,32 @@ def _sync_streamlit_secrets_to_env() -> None:
 
 _sync_streamlit_secrets_to_env()
 
-import app as flask_app_module
+
+def _import_flask_app_module():
+    """Import the Flask app module.
+
+    Historically this project used `app.py`, but this workspace currently ships
+    the Flask app in `main.py`. Streamlit Cloud will crash at import time if we
+    hardcode the wrong module name, so we try both.
+    """
+
+    for module_name in ("app", "main"):
+        try:
+            return importlib.import_module(module_name)
+        except ModuleNotFoundError as exc:
+            # Only swallow the error if *this* module doesn't exist.
+            # If an inner import fails (e.g. missing dependency), re-raise.
+            if getattr(exc, "name", None) == module_name:
+                continue
+            raise
+
+    raise ModuleNotFoundError(
+        "Unable to import the Flask app module. Expected either `app.py` "
+        "(import name: 'app') or `main.py` (import name: 'main') at repo root."
+    )
+
+
+flask_app_module = _import_flask_app_module()
 
 
 @contextmanager
