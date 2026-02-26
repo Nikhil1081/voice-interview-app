@@ -48,6 +48,7 @@ Candidates record audio responses to predefined interview questions, and admins 
 ```
 voice-interview-app/
 ├── app.py                          # Main Flask application
+├── streamlit_app.py                 # Streamlit entrypoint (recommended)
 ├── requirements.txt                # Python dependencies
 ├── interview.db                    # SQLite database (auto-created)
 ├── .env.example                    # Environment variables template
@@ -123,9 +124,19 @@ voice-interview-app/
    python app.py
    ```
 
+   **Or run the Streamlit version (recommended):**
+   ```bash
+   streamlit run streamlit_app.py
+   ```
+
 6. **Access the app:**
+   **If running Flask (`python app.py`):**
    - **Candidate:** http://127.0.0.1:5000/
    - **Admin:** http://127.0.0.1:5000/admin/login
+
+   **If running Streamlit (`streamlit run streamlit_app.py`):**
+   - Open: http://localhost:8501
+   - Use the sidebar to switch between **Candidate** and **Admin**
    - **Default Admin Credentials:**
      - Username: `admin`
      - Password: `admin123`
@@ -259,6 +270,36 @@ voice-interview-app/
    ```
 
 5. **Your app will be live at:** `https://your-app-name.herokuapp.com`
+
+
+### Option 3: Deploy to Streamlit Community Cloud (Recommended)
+
+#### Prerequisites
+- GitHub repository
+- Streamlit Community Cloud account
+
+#### Steps
+
+1. **Push to GitHub**
+
+2. **Create a Streamlit app**
+   - Go to https://share.streamlit.io
+   - Click "New app"
+   - Select your repo and branch
+   - Set **Main file path** to:
+     - `streamlit_app.py`
+
+3. **Configure secrets (recommended)**
+   In the Streamlit app settings, add secrets:
+   - `SECRET_KEY = "<random>"`
+   - `ADMIN_USERNAME = "admin"`
+   - `ADMIN_PASSWORD = "<strong password>"`
+   - (Optional) `DATABASE_URL = "sqlite:///interview.db"`
+
+4. **Deploy**
+   Streamlit will install from `requirements.txt` and launch automatically.
+
+   Note: the default setup uses local SQLite (`interview.db`) and stores audio in `uploads/`. On Streamlit Community Cloud, local disk is not a durable database; for long-term persistence, configure an external DB + file storage.
 
 ---
 
