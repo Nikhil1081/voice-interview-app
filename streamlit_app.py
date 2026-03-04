@@ -1,4 +1,5 @@
 import os
+import time
 import uuid
 from contextlib import contextmanager
 from datetime import datetime
@@ -137,6 +138,25 @@ def save_audio_bytes(original_name: str, audio_bytes: bytes, question_id: int) -
     return unique_name
 
 
+def _question_time_limit_seconds(question) -> int | None:
+    """Return time limit in seconds, or None if unlimited/unknown."""
+
+    mins = getattr(question, "duration_minutes", None)
+    try:
+        mins_int = int(mins) if mins is not None else 0
+    except Exception:
+        mins_int = 0
+    if mins_int <= 0:
+        return None
+    return mins_int * 60
+
+
+def _format_mmss(seconds: int) -> str:
+    seconds = max(int(seconds), 0)
+    mm, ss = divmod(seconds, 60)
+    return f"{mm:02d}:{ss:02d}"
+
+
 def page_candidate():
     st.markdown("<div class='nxt-card'>", unsafe_allow_html=True)
     st.header("Candidate Interview")
@@ -227,6 +247,32 @@ def page_candidate():
             continue
 
         # Current question input
+        limit_seconds = _question_time_limit_seconds(q)
+        remaining_seconds: int | None = None
+        if limit_seconds is not None:
+            start_key = f"cand_q_start_{q.id}"
+            if start_key not in st.session_state:
+                st.session_state[start_key] = time.time()
+            try:
+                started_at = float(st.session_state[start_key])
+            except Exception:
+                started_at = time.time()
+                st.session_state[start_key] = started_at
+
+            elapsed = max(0.0, time.time() - started_at)
+            remaining_seconds = max(0, int(limit_seconds - elapsed))
+
+            st.caption(
+                f"Time limit: {int(limit_seconds / 60)} min • Remaining: {_format_mmss(remaining_seconds)}"
+            )
+
+            if remaining_seconds <= 0:
+                st.error("Time is up for this question.")
+                if st.button("Next question", key=f"cand_next_{q.id}"):
+                    st.session_state["cand_index"] = index + 1
+                    st.rerun()
+                return
+
         with st.chat_message("user"):
             st.markdown("**Record or upload your answer**")
 
@@ -251,6 +297,9 @@ def page_candidate():
                 st.audio(audio_bytes)
 
             if st.button("Send answer", key=f"cand_send_{q.id}"):
+                if limit_seconds is not None and (remaining_seconds is None or remaining_seconds <= 0):
+                    st.error("Time is up. Please click Next question.")
+                    return
                 if not audio_bytes or not audio_name:
                     st.error("Please record or upload audio before sending.")
                 else:
@@ -388,6 +437,12 @@ def page_admin_questions():
 
     with st.form("add_question_form"):
         new_text = st.text_area("New question")
+        duration_minutes = st.number_input(
+            "Timer (minutes, 0 = no limit)",
+            min_value=0,
+            step=1,
+            value=2,
+        )
         add = st.form_submit_button("Add Question")
 
     if add:
@@ -396,7 +451,10 @@ def page_admin_questions():
             st.error("Question text is required.")
         else:
             with flask_context():
-                flask_app_module.db.session.add(flask_app_module.Question(text=new_text))
+                dur = int(duration_minutes) if duration_minutes is not None else 0
+                flask_app_module.db.session.add(
+                    flask_app_module.Question(text=new_text, duration_minutes=dur)
+                )
                 flask_app_module.db.session.commit()
             st.success("Question added.")
             st.rerun()
@@ -411,6 +469,18 @@ def page_admin_questions():
     for q in questions:
         with st.expander(f"Q{q.id}"):
             updated_text = st.text_area("Text", value=q.text, key=f"qtext_{q.id}")
+            current_dur = getattr(q, "duration_minutes", None)
+            try:
+                current_dur_int = int(current_dur) if current_dur is not None else 0
+            except Exception:
+                current_dur_int = 0
+            updated_dur = st.number_input(
+                "Timer (minutes, 0 = no limit)",
+                min_value=0,
+                step=1,
+                value=max(current_dur_int, 0),
+                key=f"qdur_{q.id}",
+            )
             col_save, col_del = st.columns(2)
 
             with col_save:
@@ -422,6 +492,7 @@ def page_admin_questions():
                         with flask_context():
                             qq = flask_app_module.Question.query.get(q.id)
                             qq.text = updated_text
+                            qq.duration_minutes = int(updated_dur) if updated_dur is not None else 0
                             flask_app_module.db.session.commit()
                         st.success("Question updated.")
                         st.rerun()

@@ -9,7 +9,7 @@ from flask import (
     flash, session, send_from_directory, abort, jsonify, Response
 )
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import or_
+from sqlalchemy import inspect, or_, text
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -45,6 +45,8 @@ class Admin(db.Model):
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
+    # 0/NULL means no time limit.
+    duration_minutes = db.Column(db.Integer, nullable=True, default=2)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
@@ -98,13 +100,44 @@ def create_sample_questions_if_empty():
             "Explain a project you built and what challenges you faced."
         ]
         for q in sample:
-            db.session.add(Question(text=q))
+            db.session.add(Question(text=q, duration_minutes=2))
         db.session.commit()
         print("✅ Sample questions created.")
 
 
+def ensure_schema_columns():
+    """Best-effort schema migration for small, single-file deployments.
+
+    This project does not use Alembic. Streamlit/Render deployments may boot
+    against an existing SQLite/Postgres database. We add new columns if missing.
+    """
+
+    inspector = inspect(db.engine)
+    try:
+        columns = {c["name"] for c in inspector.get_columns("question")}
+    except Exception:
+        # If reflection fails for any reason, don't block app startup.
+        return
+
+    if "duration_minutes" not in columns:
+        try:
+            with db.engine.begin() as conn:
+                conn.execute(text("ALTER TABLE question ADD COLUMN duration_minutes INTEGER"))
+                conn.execute(
+                    text(
+                        "UPDATE question SET duration_minutes = :d "
+                        "WHERE duration_minutes IS NULL"
+                    ),
+                    {"d": 2},
+                )
+        except Exception:
+            # Don't crash the app if ALTER TABLE isn't supported by the backing DB.
+            return
+
+
 with app.app_context():
     db.create_all()
+    ensure_schema_columns()
     create_default_admin()
     create_sample_questions_if_empty()
 
