@@ -37,15 +37,31 @@ def _import_flask_app_module():
     hardcode the wrong module name, so we try both.
     """
 
-    for module_name in ("app", "main"):
+    def is_full_flask_module(module) -> bool:
+        """Return True if this module exports app + DB models used by Streamlit.
+
+        Streamlit uses the Flask app's SQLAlchemy models directly (e.g.
+        `Question.query`). Some deployments include an `app.py` shim that only
+        re-exports the Flask `app` object; importing that shim would succeed but
+        the models wouldn't exist, causing AttributeError at runtime.
+        """
+
+        required_attrs = ("app", "db", "Question", "Candidate", "Submission", "Admin")
+        return all(hasattr(module, attr) for attr in required_attrs)
+
+    # Prefer `main` because this repo's `app.py` is a WSGI shim.
+    for module_name in ("main", "app"):
         try:
-            return importlib.import_module(module_name)
+            module = importlib.import_module(module_name)
         except ModuleNotFoundError as exc:
             # Only swallow the error if *this* module doesn't exist.
             # If an inner import fails (e.g. missing dependency), re-raise.
             if getattr(exc, "name", None) == module_name:
                 continue
             raise
+
+        if is_full_flask_module(module):
+            return module
 
     raise ModuleNotFoundError(
         "Unable to import the Flask app module. Expected either `app.py` "
@@ -128,7 +144,16 @@ def page_candidate():
     st.markdown("</div>", unsafe_allow_html=True)
 
     with flask_context():
-        questions = flask_app_module.Question.query.order_by(flask_app_module.Question.id.asc()).all()
+        if hasattr(flask_app_module.Question, "query"):
+            questions = (
+                flask_app_module.Question.query.order_by(flask_app_module.Question.id.asc()).all()
+            )
+        else:
+            questions = (
+                flask_app_module.db.session.query(flask_app_module.Question)
+                .order_by(flask_app_module.Question.id.asc())
+                .all()
+            )
 
     if not questions:
         st.warning("No questions are set yet.")
